@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Maison Riva — Votre diagnostic</title>
+<script>document.documentElement.className = "js";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f1f0ec;
+    --paper: #fbfaf7;
+    --field: #dfe9e3;
+    --ink: #1c2421;
+    --muted: #535a55;
+    --line: #b9bdb6;
+    --accent: #2e5e50;
+    --accent-ink: #fbfaf7;
+    --display: "Bodoni Moda", serif;
+    --text: "Jost", sans-serif;
+    --radius: 3px;
+    --gutter: clamp(20px, 5vw, 72px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--text); font-size: 17px; line-height: 1.6; letter-spacing: .01em; }
+  ::selection { background: var(--ink); color: var(--paper); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .page { display: grid; grid-template-columns: minmax(340px, 42%) 1fr; min-height: 100svh; }
+
+  /* Panneau fixe : l'outil se dessine */
+  .stage { position: sticky; top: 0; height: 100svh; background: var(--field); padding: 40px var(--gutter); display: flex; flex-direction: column; justify-content: space-between; gap: 32px; overflow: auto; }
+  .name { font-family: var(--display); font-style: italic; font-weight: 500; font-size: clamp(56px, 6vw, 92px); line-height: .9; letter-spacing: -.02em; }
+  .name small { display: block; font-family: var(--text); font-style: normal; font-size: 15px; letter-spacing: .01em; color: var(--muted); margin-top: 12px; }
+  .tool h2 { font-family: var(--display); font-weight: 500; font-size: 28px; line-height: 1.1; letter-spacing: -.01em; margin-bottom: 16px; }
+  .tool dl { display: grid; gap: 14px; }
+  .tool dt { font-size: 14px; color: var(--muted); }
+  .tool dd { font-size: 17px; font-weight: 500; }
+  .tool dd.empty { font-weight: 400; color: var(--muted); }
+  .tool .hint { color: var(--muted); font-size: 15px; max-width: 34ch; }
+  .tool dd { transition: color .25s ease; }
+  .tool dd.fresh { color: var(--accent); }
+
+  /* Colonne de lecture */
+  .read { padding: 72px var(--gutter) 120px; max-width: 760px; }
+  .intro h1 { font-family: var(--display); font-weight: 500; font-size: clamp(40px, 4.6vw, 64px); line-height: 1; letter-spacing: -.02em; }
+  .intro p { margin-top: 20px; max-width: 46ch; font-size: 19px; }
+  .intro p + p { font-size: 17px; color: var(--muted); margin-top: 12px; }
+
+  fieldset { border: 0; margin-top: 88px; }
+  legend { font-family: var(--display); font-weight: 500; font-size: clamp(30px, 3vw, 40px); line-height: 1.05; letter-spacing: -.02em; }
+  .q { margin-top: 32px; }
+  .q > p, .q > label { display: block; font-weight: 500; margin-bottom: 12px; }
+  .q > p span, .q > label span { font-weight: 400; color: var(--muted); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chips label { position: relative; }
+  .chips input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .chips span { display: inline-flex; align-items: center; min-height: 46px; padding: 8px 16px; border: 1.5px solid var(--line); border-radius: var(--radius); background: var(--paper); transition: background .2s ease, color .2s ease, border-color .2s ease; cursor: pointer; user-select: none; }
+  .chips label:hover span { border-color: var(--ink); }
+  .chips input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .chips input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .moods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .moods label { position: relative; display: block; }
+  .moods input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .moods .m { display: block; border: 1.5px solid var(--line); border-radius: var(--radius); background: var(--paper); padding: 12px; cursor: pointer; transition: border-color .2s ease; }
+  .moods .sw { display: flex; height: 54px; border-radius: var(--radius); overflow: hidden; margin-bottom: 10px; }
+  .moods .sw i { flex: 1; }
+  .moods b { font-weight: 500; display: block; line-height: 1.3; }
+  .moods input:checked + .m { border-color: var(--ink); background: var(--field); }
+  .moods input:focus-visible + .m { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  input[type=text], textarea { width: 100%; font: inherit; color: var(--ink); background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--radius); padding: 12px 14px; min-height: 48px; }
+  textarea { min-height: 104px; resize: vertical; }
+  input[type=text]:focus, textarea:focus { border-color: var(--ink); outline: 2px solid var(--field); outline-offset: 0; }
+
+  .send { margin-top: 96px; }
+  .send p { max-width: 40ch; font-size: 19px; }
+  .send small { display: block; color: var(--muted); font-size: 15px; margin-top: 8px; }
+  button { font: inherit; font-weight: 500; margin-top: 24px; min-height: 52px; padding: 0 28px; border: 0; border-radius: var(--radius); background: var(--accent); color: var(--accent-ink); cursor: pointer; transition: transform .15s ease, background .2s ease; }
+  button:hover { background: var(--ink); }
+  button:active { transform: scale(.98); }
+  button[disabled] { opacity: .6; cursor: progress; }
+  .status { margin-top: 16px; min-height: 1.6em; color: var(--muted); }
+  .status.err { color: #8a2c1f; }
+
+  .done { display: none; margin-top: 72px; }
+  .done h2 { font-family: var(--display); font-style: italic; font-weight: 500; font-size: clamp(40px, 4.6vw, 64px); line-height: 1; letter-spacing: -.02em; }
+  .done p { margin-top: 20px; max-width: 42ch; font-size: 19px; }
+  .sent form, .sent .intro { display: none; }
+  .sent .done { display: block; }
+
+  .hp { position: absolute; left: -9999px; }
+
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  /* Téléphone : sa propre composition */
+  @media (max-width: 860px) {
+    .page { display: block; }
+    .stage { position: static; height: auto; padding: 28px 20px 32px; }
+    .stage .tool { display: none; }
+    .read { padding: 40px 20px 96px; }
+    .tool.mobile { display: block; margin-top: 72px; background: var(--field); margin-left: -20px; margin-right: -20px; padding: 32px 20px; }
+    fieldset { margin-top: 64px; }
+    .moods { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .moods .sw { height: 40px; }
+  }
+  @media (min-width: 861px) { .tool.mobile { display: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+  <aside class="stage">
+    <p class="name">maison riva</p>
+    <div class="tool" aria-live="polite">
+      <h2>Votre outil sur mesure</h2>
+      <dl class="recap"></dl>
+      <p class="hint">Il se dessine ici, au fil de vos réponses.</p>
+    </div>
+  </aside>
+
+  <main class="read">
+    <header class="intro">
+      <h1>Pour une fois, c'est vous la cliente</h1>
+      <p>L'art du diagnostic, version Maison Riva&nbsp;: quelques questions pour imaginer un outil qui vous ressemble, et qui vous fait vraiment gagner du temps.</p>
+      <p>Environ cinq minutes. Aucune réponse n'est obligatoire, et vos réponses restent sur ce téléphone tant que vous n'avez pas envoyé.</p>
+    </header>
+
+    <form id="f" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="32acdb51-a679-4ea0-8159-3e5dc3d544a0">
+      <input type="hidden" name="subject" value="Maison Riva — le diagnostic de Julie">
+      <input type="hidden" name="from_name" value="Questionnaire Maison Riva">
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <fieldset class="reveal">
+        <legend>Ce que vous aimeriez montrer</legend>
+        <div class="q">
+          <p>Les prestations à mettre en avant <span>(plusieurs choix possibles)</span></p>
+          <div data-ui class="chips" data-recap="Mettre en avant">
+            <label><input type="checkbox" name="Montrer" value="Balayage et blond"><span>Balayage et blond</span></label>
+            <label><input type="checkbox" name="Montrer" value="Rituel couleur"><span>Rituel couleur</span></label>
+            <label><input type="checkbox" name="Montrer" value="Coupe sur mesure"><span>Coupe sur mesure</span></label>
+            <label><input type="checkbox" name="Montrer" value="Brushing signature"><span>Brushing signature</span></label>
+            <label><input type="checkbox" name="Montrer" value="L'espace homme"><span>L'espace homme</span></label>
+            <label><input type="checkbox" name="Montrer" value="Petite Riva (enfants)"><span>Petite Riva (enfants)</span></label>
+            <label><input type="checkbox" name="Montrer" value="Mariage et événements"><span>Mariage et événements</span></label>
+            <label><input type="checkbox" name="Montrer" value="L'expérience privatisée"><span>L'expérience privatisée</span></label>
+            <label><input type="checkbox" name="Montrer" value="Le salon et son ambiance"><span>Le salon et son ambiance</span></label>
+            <label><input type="checkbox" name="Montrer" value="Vous et votre parcours"><span>Vous et votre parcours</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <label for="fierte">La prestation dont vous êtes la plus fière, et pourquoi</label>
+          <textarea data-ui id="fierte" name="Fierté"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset class="reveal">
+        <legend>Vos clientes</legend>
+        <div class="q">
+          <p>Qui vient au salon aujourd'hui ?</p>
+          <div data-ui class="chips">
+            <label><input type="checkbox" name="Clientes aujourd'hui" value="Deauvillais à l'année"><span>Deauvillais à l'année</span></label>
+            <label><input type="checkbox" name="Clientes aujourd'hui" value="Résidents secondaires"><span>Résidents secondaires</span></label>
+            <label><input type="checkbox" name="Clientes aujourd'hui" value="Touristes de passage"><span>Touristes de passage</span></label>
+            <label><input type="checkbox" name="Clientes aujourd'hui" value="Hommes"><span>Hommes</span></label>
+            <label><input type="checkbox" name="Clientes aujourd'hui" value="Familles"><span>Familles</span></label>
+            <label><input type="checkbox" name="Clientes aujourd'hui" value="Futures mariées"><span>Futures mariées</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <p>Qui aimeriez-vous voir plus souvent ?</p>
+          <div data-ui class="chips" data-recap="Pour attirer">
+            <label><input type="checkbox" name="Clientes à attirer" value="Deauvillais à l'année"><span>Deauvillais à l'année</span></label>
+            <label><input type="checkbox" name="Clientes à attirer" value="Résidents secondaires"><span>Résidents secondaires</span></label>
+            <label><input type="checkbox" name="Clientes à attirer" value="Touristes de passage"><span>Touristes de passage</span></label>
+            <label><input type="checkbox" name="Clientes à attirer" value="Hommes"><span>Hommes</span></label>
+            <label><input type="checkbox" name="Clientes à attirer" value="Familles"><span>Familles</span></label>
+            <label><input type="checkbox" name="Clientes à attirer" value="Futures mariées"><span>Futures mariées</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <label for="paris">Il paraît que certains vont à Paris pour leur coiffure. D'après vous, pourquoi ?</label>
+          <textarea data-ui id="paris" name="Paris"></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset class="reveal">
+        <legend>Votre temps</legend>
+        <div class="q">
+          <p>Quand auriez-vous deux minutes pour publier ?</p>
+          <div data-ui class="chips" data-recap="Moment">
+            <label><input type="checkbox" name="Moment" value="Le matin avant d'ouvrir"><span>Le matin avant d'ouvrir</span></label>
+            <label><input type="checkbox" name="Moment" value="Entre deux clientes"><span>Entre deux clientes</span></label>
+            <label><input type="checkbox" name="Moment" value="À la pause"><span>À la pause</span></label>
+            <label><input type="checkbox" name="Moment" value="Le soir"><span>Le soir</span></label>
+            <label><input type="checkbox" name="Moment" value="Plutôt ensemble, de temps en temps"><span>Plutôt ensemble, de temps en temps</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <p>Le bon rythme pour vous</p>
+          <div data-ui class="chips" data-recap="Rythme">
+            <label><input type="radio" name="Rythme" value="Une fois par semaine"><span>Une fois par semaine</span></label>
+            <label><input type="radio" name="Rythme" value="Deux ou trois fois par semaine"><span>Deux ou trois fois par semaine</span></label>
+            <label><input type="radio" name="Rythme" value="Quand j'ai une belle réalisation"><span>Quand j'ai une belle réalisation</span></label>
+            <label><input type="radio" name="Rythme" value="Je ne sais pas encore"><span>Je ne sais pas encore</span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="reveal">
+        <legend>Les photos</legend>
+        <div class="q">
+          <p>Ce qui vous freine aujourd'hui</p>
+          <div data-ui class="chips" data-recap="Coup de main sur">
+            <label><input type="checkbox" name="Freins" value="La lumière"><span>La lumière</span></label>
+            <label><input type="checkbox" name="Freins" value="Le cadrage"><span>Le cadrage</span></label>
+            <label><input type="checkbox" name="Freins" value="Oser demander aux clientes"><span>Oser demander aux clientes</span></label>
+            <label><input type="checkbox" name="Freins" value="Filmer des vidéos"><span>Filmer des vidéos</span></label>
+            <label><input type="checkbox" name="Freins" value="Trouver quoi écrire"><span>Trouver quoi écrire</span></label>
+            <label><input type="checkbox" name="Freins" value="Le temps"><span>Le temps</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <p>Vos clientes acceptent-elles d'être prises en photo ?</p>
+          <div data-ui class="chips">
+            <label><input type="radio" name="Clientes en photo" value="Souvent"><span>Souvent</span></label>
+            <label><input type="radio" name="Clientes en photo" value="Parfois"><span>Parfois</span></label>
+            <label><input type="radio" name="Clientes en photo" value="Plutôt sans le visage"><span>Plutôt sans le visage</span></label>
+            <label><input type="radio" name="Clientes en photo" value="Je n'ai jamais demandé"><span>Je n'ai jamais demandé</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <label for="enligne">Où sont les photos que vous avez déjà en ligne ? <span>(lien ou nom du compte)</span></label>
+          <input data-ui type="text" id="enligne" name="Photos en ligne">
+        </div>
+      </fieldset>
+
+      <fieldset class="reveal">
+        <legend>Votre style</legend>
+        <div class="q">
+          <p>L'ambiance qui ressemble le plus à Maison Riva</p>
+          <div data-ui class="moods" data-recap="Ambiance">
+            <label><input type="radio" name="Ambiance" value="Élégant et épuré"><span class="m"><span class="sw"><i style="background:#f6f3ee"></i><i style="background:#1c2421"></i><i style="background:#c9b99a"></i></span><b>Élégant et épuré</b></span></label>
+            <label><input type="radio" name="Ambiance" value="Chaleureux et naturel"><span class="m"><span class="sw"><i style="background:#efe4d4"></i><i style="background:#a86f4c"></i><i style="background:#6b7a58"></i></span><b>Chaleureux et naturel</b></span></label>
+            <label><input type="radio" name="Ambiance" value="Moderne et lumineux"><span class="m"><span class="sw"><i style="background:#ffffff"></i><i style="background:#e8e2d9"></i><i style="background:#2e5e50"></i></span><b>Moderne et lumineux</b></span></label>
+            <label><input type="radio" name="Ambiance" value="Esprit Deauville, bord de mer"><span class="m"><span class="sw"><i style="background:#f2ede3"></i><i style="background:#2f5d7c"></i><i style="background:#d9573f"></i></span><b>Esprit Deauville, bord de mer</b></span></label>
+          </div>
+        </div>
+        <div class="q">
+          <label for="inspi">Des salons, des comptes ou des marques dont vous aimez le style ?</label>
+          <input data-ui type="text" id="inspi" name="Inspirations">
+        </div>
+      </fieldset>
+
+      <fieldset class="reveal">
+        <legend>Ce qui vous aiderait le plus</legend>
+        <div class="q">
+          <p>Vos priorités <span>(deux ou trois suffisent)</span></p>
+          <div data-ui class="chips" data-recap="Priorités">
+            <label><input type="checkbox" name="Priorités" value="Être trouvée sur Google"><span>Être trouvée sur Google</span></label>
+            <label><input type="checkbox" name="Priorités" value="Plus d'avis sur Google"><span>Plus d'avis sur Google</span></label>
+            <label><input type="checkbox" name="Priorités" value="Un Instagram qui vit"><span>Un Instagram qui vit</span></label>
+            <label><input type="checkbox" name="Priorités" value="Une belle page Maison Riva"><span>Une belle page Maison Riva</span></label>
+            <label><input type="checkbox" name="Priorités" value="Remplir les creux du planning"><span>Remplir les creux du planning</span></label>
+            <label><input type="checkbox" name="Priorités" value="Faire revenir les clientes"><span>Faire revenir les clientes</span></label>
+            <label><input type="checkbox" name="Priorités" value="Faire connaître une prestation"><span>Faire connaître une prestation</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <p>Votre fiche Google existe-t-elle déjà ?</p>
+          <div data-ui class="chips">
+            <label><input type="radio" name="Fiche Google" value="Oui"><span>Oui</span></label>
+            <label><input type="radio" name="Fiche Google" value="Non"><span>Non</span></label>
+            <label><input type="radio" name="Fiche Google" value="Je ne sais pas"><span>Je ne sais pas</span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="reveal">
+        <legend>Le mot de la fin</legend>
+        <div class="q">
+          <label for="jamais">Ce que vous ne voudriez surtout pas voir publié en votre nom</label>
+          <textarea data-ui id="jamais" name="Surtout pas"></textarea>
+        </div>
+        <div class="q">
+          <label for="cafe">Quand puis-je passer pour le café ?</label>
+          <input data-ui type="text" id="cafe" name="Café">
+        </div>
+        <div class="q">
+          <label for="mot">Une idée, une question, une envie ?</label>
+          <textarea data-ui id="mot" name="Message"></textarea>
+        </div>
+      </fieldset>
+
+      <div class="tool mobile" aria-hidden="true">
+        <h2>Votre outil sur mesure</h2>
+        <dl class="recap"></dl>
+        <p class="hint">Il se dessine ici, au fil de vos réponses.</p>
+      </div>
+
+      <div class="send">
+        <p>C'est tout. Merci pour votre temps, je reviens vers vous très vite.</p>
+        <small>Vos réponses ne partent qu'à Antoine, et ne seront jamais publiées.</small>
+        <button type="submit">Envoyer mes réponses</button>
+        <p class="status" role="status"></p>
+      </div>
+    </form>
+
+    <section class="done" tabindex="-1">
+      <h2>Merci Julie</h2>
+      <p>Vos réponses sont bien arrivées. Je prépare une première idée de votre outil et je passe vous la montrer autour d'un café.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var form = document.getElementById('f');
+  var KEY = 'maison-riva-diagnostic';
+  var groups = Array.prototype.slice.call(document.querySelectorAll('[data-recap]'));
+  var recaps = document.querySelectorAll('.recap');
+  var hints = document.querySelectorAll('.tool .hint');
+  var last = {};
+
+  function values(el) {
+    return Array.prototype.slice.call(el.querySelectorAll('input:checked')).map(function (i) { return i.value; });
+  }
+
+  function render() {
+    var rows = [];
+    groups.forEach(function (g) {
+      var v = values(g);
+      if (!v.length) return;
+      var label = g.getAttribute('data-recap');
+      var text = v.join(', ');
+      rows.push({ label: label, text: text, fresh: last[label] !== text });
+      last[label] = text;
+    });
+    recaps.forEach(function (dl) {
+      dl.innerHTML = '';
+      rows.forEach(function (r) {
+        var dt = document.createElement('dt'); dt.textContent = r.label;
+        var dd = document.createElement('dd'); dd.textContent = r.text;
+        if (r.fresh) { dd.className = 'fresh'; setTimeout(function () { dd.className = ''; }, 900); }
+        dl.appendChild(dt); dl.appendChild(dd);
+      });
+    });
+    hints.forEach(function (h) { h.style.display = rows.length ? 'none' : ''; });
+  }
+
+  function save() {
+    var data = {};
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name || el.type === 'hidden' || el.name === 'botcheck') return;
+      if (el.type === 'checkbox' || el.type === 'radio') { if (el.checked) (data[el.name] = data[el.name] || []).push(el.value); }
+      else if (el.value) data[el.name] = el.value;
+    });
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+  }
+
+  function restore() {
+    var data;
+    try { data = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+    if (!data) return;
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name || !(el.name in data)) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = data[el.name].indexOf(el.value) !== -1;
+      else if (el.type !== 'hidden') el.value = data[el.name];
+    });
+  }
+
+  restore();
+  render();
+  last = {};
+  form.addEventListener('change', function () { render(); save(); });
+  form.addEventListener('input', save);
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = form.querySelector('button');
+    var status = form.querySelector('.status');
+    var payload = {};
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name) return;
+      if (el.type === 'checkbox' || el.type === 'radio') {
+        if (el.name === 'botcheck') { payload.botcheck = el.checked; return; }
+        if (el.checked) payload[el.name] = payload[el.name] ? payload[el.name] + ', ' + el.value : el.value;
+      } else if (el.value) payload[el.name] = el.value;
+    });
+    btn.disabled = true;
+    status.className = 'status';
+    status.textContent = 'Envoi en cours…';
+    fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (!res.success) throw new Error(res.message || 'Erreur');
+        try { localStorage.removeItem(KEY); } catch (err) {}
+        document.getElementById('page').classList.add('sent');
+        window.scrollTo(0, 0);
+        document.querySelector('.done').focus();
+      })
+      .catch(function () {
+        btn.disabled = false;
+        status.className = 'status err';
+        status.textContent = "L'envoi n'a pas marché. Vos réponses sont gardées : réessayez dans un instant.";
+      });
+  });
+
+  var items = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    items.forEach(function (el) { io.observe(el); });
+  } else {
+    items.forEach(function (el) { el.classList.add('in'); });
+  }
+})();
+</script>
+</body>
+</html>
