@@ -8,7 +8,7 @@
 <script>document.documentElement.className = "js";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,500&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f1f0ec;
@@ -20,7 +20,7 @@
     --accent: #2e5e50;
     --accent-ink: #fbfaf7;
     --display: "Bodoni Moda", serif;
-    --text: "Jost", sans-serif;
+    --text: "Hanken Grotesk", sans-serif;
     --radius: 3px;
     --gutter: clamp(20px, 5vw, 72px);
   }
@@ -36,7 +36,7 @@
   .stage { position: sticky; top: 0; height: 100svh; background: var(--field); padding: 40px var(--gutter); display: flex; flex-direction: column; justify-content: space-between; gap: 32px; overflow: auto; }
   .name { font-family: var(--display); font-style: italic; font-weight: 500; font-size: clamp(56px, 6vw, 92px); line-height: .9; letter-spacing: -.02em; }
   .name small { display: block; font-family: var(--text); font-style: normal; font-size: 15px; letter-spacing: .01em; color: var(--muted); margin-top: 12px; }
-  .tool h2 { font-family: var(--display); font-weight: 500; font-size: 28px; line-height: 1.1; letter-spacing: -.01em; margin-bottom: 16px; }
+  .tool h2 { font-weight: 700; font-size: 26px; line-height: 1.1; letter-spacing: -.01em; margin-bottom: 16px; }
   .tool dl { display: grid; gap: 14px; }
   .tool dt { font-size: 14px; color: var(--muted); }
   .tool dd { font-size: 17px; font-weight: 500; }
@@ -47,12 +47,12 @@
 
   /* Colonne de lecture */
   .read { padding: 72px var(--gutter) 120px; max-width: 760px; }
-  .intro h1 { font-family: var(--display); font-weight: 500; font-size: clamp(40px, 4.6vw, 64px); line-height: 1; letter-spacing: -.02em; }
+  .intro h1 { font-weight: 700; font-size: clamp(34px, 4vw, 52px); line-height: 1.08; letter-spacing: -.02em; }
   .intro p { margin-top: 20px; max-width: 46ch; font-size: 19px; }
   .intro p + p { font-size: 17px; color: var(--muted); margin-top: 12px; }
 
   fieldset { border: 0; margin-top: 88px; }
-  legend { font-family: var(--display); font-weight: 500; font-size: clamp(30px, 3vw, 40px); line-height: 1.05; letter-spacing: -.02em; }
+  legend { font-weight: 700; font-size: clamp(26px, 2.6vw, 34px); line-height: 1.15; letter-spacing: -.02em; }
   .q { margin-top: 32px; }
   .q > p, .q > label { display: block; font-weight: 500; margin-bottom: 12px; }
   .q > p span, .q > label span { font-weight: 400; color: var(--muted); }
@@ -90,7 +90,7 @@
   .status.err { color: #8a2c1f; }
 
   .done { display: none; margin-top: 72px; }
-  .done h2 { font-family: var(--display); font-style: italic; font-weight: 500; font-size: clamp(40px, 4.6vw, 64px); line-height: 1; letter-spacing: -.02em; }
+  .done h2 { font-weight: 700; font-size: clamp(34px, 4vw, 52px); line-height: 1.08; letter-spacing: -.02em; }
   .done p { margin-top: 20px; max-width: 42ch; font-size: 19px; }
   .sent form, .sent .intro { display: none; }
   .sent .done { display: block; }
